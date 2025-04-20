@@ -5,11 +5,8 @@ using System.Threading.Tasks;
 using Xunit;
 using FluentAssertions;
 using BlackjackGame.Engine;
-<<<<<<< HEAD
 using BlackjackGame.Models;
 using BlackjackGame.Enums;
-=======
->>>>>>> 307a1f9 (created the deck)
 
 
 
@@ -17,14 +14,12 @@ namespace BlackjackGameTests.EngineTests
 {
     public class DeckTests
     {
-<<<<<<< HEAD
         Deck deck = new Deck();
         
         [Fact]
         public void Deck_Should_Contain_52_Cards()
         {
              // Act
-=======
         [Fact]
         public void Deck_Should_Contain_52_Cards()
         {
@@ -42,27 +37,23 @@ namespace BlackjackGameTests.EngineTests
         [Fact]
         public void Deck_Should_Have_Unique_Cards()
         {
-<<<<<<< HEAD
-=======
+
             // Arrange
             var deck = new Deck();
 
             // Act
->>>>>>> 307a1f9 (created the deck)
+
             var cardDeck = deck.deckOfCards;
 
             // Assert
             cardDeck.Select(card => (card.Suit, card.Rank)).Should().OnlyHaveUniqueItems();
         }
-<<<<<<< HEAD
 
-=======
->>>>>>> 307a1f9 (created the deck)
         [Fact]
         public void Shuffled_Cards_Should_Not_Be_Same_As_Original_Cards()
         {
             // Arrange
-<<<<<<< HEAD
+
             var originalDeck = deck.deckOfCards.ToList();
 
             // Act
@@ -123,16 +114,45 @@ namespace BlackjackGameTests.EngineTests
             
         }
 
-=======
+            var deck = new Deck();
+            var originalDeck = deck.deckOfCards.ToList();
+
+            // Act
+            deck.Shuffle();
+            var shuffledDeck = deck.deckOfCards.ToList();
+
+            // Assert
+            shuffledDeck.Should().NotEqual(originalDeck);
+        }
+
+        [Fact]
+        public void Shuffled_Cards_Should_Contain_52_Cards()
+        {
+            // Arrange
             var deck = new Deck();
 
             // Act
-            var shuffledCards = deck.shuffle(cards);
+            deck.Shuffle();
+            var shuffledDeck = deck.deckOfCards.ToList();
 
             // Assert
-            shuffledCards.Should().NotBe(deck);
+            shuffledDeck.Should().HaveCount(52);
         }
->>>>>>> 307a1f9 (created the deck)
+
+    [Fact]
+        public void Shuffled_Deck_Should_Have_Unique_Cards()
+        {
+            // Arrange
+            var deck = new Deck();
+
+            // Act
+            deck.Shuffle();
+            var shuffledDeck = deck.deckOfCards.ToList();
+
+            // Assert
+            shuffledDeck.Select(card => (card.Suit, card.Rank)).Should().OnlyHaveUniqueItems();
+        }
+
     }
 
 }
