@@ -6,8 +6,14 @@ using BlackjackGame.Interfaces;
 
 namespace BlackjackGame.Engine
 {
-    public class Engine
+    public static class Engine
     {
-        
+        public Engine(){
+
+        }
+
+        public void StartGame(){
+
+        }
     }
 }
