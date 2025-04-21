@@ -21,6 +21,9 @@ namespace BlackjackTests.EngineTests
 
             // Assert
             mockDeck.Verify(deck=> deck.InitializeDeck(), Times.Once);
+        public void Test1()
+        {
+            Assert.True(true);
         }
     }
 }
