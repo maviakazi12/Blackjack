@@ -12,7 +12,7 @@ namespace BlackjackTests.EngineTests
     {
         [Fact]
         public void StartGame_Should_Initialize_The_Deck()
-        {
+{
             // Arrange
             var mockDeck = new Mock<IDeck>();
             
@@ -22,8 +22,16 @@ namespace BlackjackTests.EngineTests
             // Assert
             mockDeck.Verify(deck=> deck.InitializeDeck(), Times.Once);
         public void Test1()
+
         {
-            Assert.True(true);
+            // Arrange
+            var mockDeck = new Mock<IDeck>();
+            
+            // Act
+            Engine.StartGame(mockDeck.Object);
+
+            // Assert
+            mockDeck.Verify(deck=> deck.InitializeDeck(), Times.Once);
         }
     }
 }
