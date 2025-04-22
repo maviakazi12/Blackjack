@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 using BlackjackGame.Engine;
+using BlackjackGame.Interfaces;
 using Moq;
 
 namespace BlackjackTests.EngineTests
@@ -11,27 +12,33 @@ namespace BlackjackTests.EngineTests
     public class EngineTests
     {
         [Fact]
-        public void StartGame_Should_Initialize_The_Deck()
-{
-            // Arrange
-            var mockDeck = new Mock<IDeck>();
-            
-            // Act
-            Engine.StartGame(mockDeck.Object);
-
-            // Assert
-            mockDeck.Verify(deck=> deck.InitializeDeck(), Times.Once);
-        public void Test1()
-
+        public void StartGame_Should_Call_InitializeDeck_Method()
         {
             // Arrange
             var mockDeck = new Mock<IDeck>();
+            Engine engine = new Engine(mockDeck.Object);
             
             // Act
-            Engine.StartGame(mockDeck.Object);
+            engine.StartGame();
 
             // Assert
             mockDeck.Verify(deck=> deck.InitializeDeck(), Times.Once);
+
+        }
+
+        [Fact]
+        public void StartGame_Should_Call_Shuffle_Method()
+        {
+            // Arrange
+            var mockDeck = new Mock<IDeck>();
+            Engine engine = new Engine(mockDeck.Object);
+            
+            // Act
+            engine.StartGame();
+
+            // Assert
+            mockDeck.Verify(deck=> deck.Shuffle(), Times.Once);
+
         }
     }
 }
