@@ -3,17 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BlackjackGame.Interfaces;
+using BlackjackGame.Models;
 
 namespace BlackjackGame.Engine
 {
-    public static class Engine
+    public class Engine
     {
-        public Engine(){
-
+        private IDeck _deck;
+        public Engine(IDeck deck){
+            _deck = deck;
         }
 
         public void StartGame(){
-
+            _deck.InitializeDeck();
+            _deck.Shuffle();
         }
     }
 }
