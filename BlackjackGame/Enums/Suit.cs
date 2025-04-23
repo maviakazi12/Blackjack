@@ -2,7 +2,7 @@ namespace BlackjackGame.Enums
 {
     public enum Suit
     {
-        spade,
+        spade ,
         diamond,
         club,
         heart
