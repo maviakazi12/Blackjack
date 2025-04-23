@@ -10,13 +10,21 @@ namespace BlackjackGame.Engine
     public class Engine
     {
         private IDeck _deck;
-        public Engine(IDeck deck){
+        public Engine(IDeck deck)
+        {
             _deck = deck;
         }
 
-        public void StartGame(){
+        public void StartGame()
+        {
             _deck.InitializeDeck();
             _deck.Shuffle();
+            _deck.Draw(2);
+        }
+
+        public void DealCards()
+        {
+
         }
     }
 }
