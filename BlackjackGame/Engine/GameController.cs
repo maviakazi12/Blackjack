@@ -19,7 +19,7 @@ namespace BlackjackGame.Engine
             if (deck == null) throw new ArgumentNullException(nameof(deck));
             if (player == null) throw new ArgumentNullException(nameof(player));
             if (dealer == null) throw new ArgumentNullException(nameof(dealer));
-            if (initialCards < 2 || initialCards > 4) throw new ArgumentException("Initialumber of cards should be between 2 and 4");
+            if (initialCards < 2 || initialCards > 4) throw new ArgumentException("Initial number of cards should be between 2 and 4");
 
         
             _deck = deck;

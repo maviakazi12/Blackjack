@@ -81,6 +81,12 @@ namespace BlackjackTests.EngineTests
             var mockPlayer = new Mock<IPlayer>();
             var mockDealer = new Mock<IPlayer>();
             GameController gameController = new GameController(mockDeck.Object,mockPlayer.Object, mockDealer.Object,4);
+            var drawnCards = new List<Card>
+            { new Card(Suit.heart, Rank.ace),
+            new Card(Suit.spade, Rank.ten)
+            };
+            mockDeck.Setup(deck=> deck.drawnCards).Returns(drawnCards);
+
 
             // Act
             gameController.Run();
