@@ -11,8 +11,8 @@ namespace BlackjackGame.Engine
     public class Deck : IDeck
     {
         public List<Card> deckOfCards { get; private set; }
-        public List<Card> drawnCard { get; private set; }
-        private bool isDeckInitialized {get; set;}
+        public List<Card> drawnCards { get; private set; }
+        private bool isDeckInitialized { get; set; }
 
         public Deck()
         {
@@ -34,7 +34,8 @@ namespace BlackjackGame.Engine
 
         public void Shuffle()
         {
-            if (!isDeckInitialized){
+            if (!isDeckInitialized)
+            {
                 throw new Exception("Deck is not initialized");
             }
             Random rand = new Random();
@@ -49,15 +50,26 @@ namespace BlackjackGame.Engine
             }
         }
 
-        public void Draw()
-        {   
-            if (!isDeckInitialized){
+        public void Draw(int numberOfCardsToDraw)
+        {
+            if (!isDeckInitialized)
+            {
                 throw new Exception("Deck is not initialized");
             }
+
+            drawnCards ??= new List<Card>();
+            drawnCards.Clear();
             Stack<Card> stackedCards = new Stack<Card>(deckOfCards);
-            var drawnCardFromStack = stackedCards.Pop();
-            drawnCard = new List<Card> { drawnCardFromStack };
-            deckOfCards =  stackedCards.ToList();
+
+            for (int i = 0; i <= numberOfCardsToDraw; i++)
+            {
+                Card card = stackedCards.Pop();
+                drawnCards.Add(card);
+            }
+
+            // var drawnCardFromStack = stackedCards.Pop();
+            // drawnCards = new List<Card> { drawnCardFromStack };
+            // deckOfCards = stackedCards.ToList();
 
 
         }
