@@ -81,26 +81,25 @@ namespace BlackjackGameTests.EngineTests
             shuffledDeck.Select(card => (card.Suit, card.Rank)).Should().OnlyHaveUniqueItems();
         }
 
-        // [Fact]
-        // public void Draw_Method_Should_Draw_One_Card_When_Given_1_parameter()
-        // {
-        //     // Act
-        //     deck.InitializeDeck();
-        //     deck.Shuffle();
-        //     deck.Draw(1);
-        //     var result = deck.drawnCards;
-        //     var singleCard = result.Single();
+        [Fact]
+        public void Draw_Method_Should_Draw_One_Card_When_Given_1_parameter()
+        {
+            // Act
+            deck.InitializeDeck();
+            deck.Shuffle();
+            deck.Draw(1);
+            var result = deck.drawnCards;
+            var singleCard = result.Single();
 
-        //     // Assert
-        //     Enum.IsDefined(typeof(Suit), singleCard.Suit).Should().BeTrue();
-        //     Enum.IsDefined(typeof(Rank), singleCard.Rank).Should().BeTrue();
-        // }
+            // Assert
+            Enum.IsDefined(typeof(Suit), singleCard.Suit).Should().BeTrue();
+            Enum.IsDefined(typeof(Rank), singleCard.Rank).Should().BeTrue();
+        }
 
         [Fact]
         public void Draw_Method_Should_Reduce_Deck_Size_By_1()
         {
             // Arrange
-            deck.InitializeDeck();
             deck.Shuffle();
 
             // Act
@@ -108,7 +107,20 @@ namespace BlackjackGameTests.EngineTests
 
             // Assert
             deck.deckOfCards.Should().HaveCount(51);
+        }
 
+        [Fact]
+        public void DrawnCards_List_Should_Be_Cleared_When_Draw_Is_Called_After_Another_Call()
+        {
+            // Arrange
+            deck.Shuffle();
+
+            // Act
+            deck.Draw(2);
+            deck.Draw(4);
+
+            // Assert
+            deck.drawnCards.Should().HaveCount(4);
         }
     }
 }
