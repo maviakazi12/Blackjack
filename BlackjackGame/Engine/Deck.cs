@@ -10,8 +10,8 @@ namespace BlackjackGame.Engine
 {
     public class Deck : IDeck
     {
-        public List<Card> deckOfCards { get; private set; }
-        public List<Card> drawnCards { get; private set; }
+        public List<Card> deckOfCards { get; private set; } = new List<Card>();
+        public List<Card> drawnCards { get; private set; } = new List<Card>();
         private bool isDeckInitialized { get; set; }
 
         public Deck()
@@ -21,7 +21,6 @@ namespace BlackjackGame.Engine
 
         public void InitializeDeck()
         {
-            deckOfCards = new List<Card>();
             foreach (Suit s in Enum.GetValues(typeof(Suit)))
             {
                 foreach (Rank r in Enum.GetValues(typeof(Rank)))
@@ -56,20 +55,17 @@ namespace BlackjackGame.Engine
             {
                 throw new Exception("Deck is not initialized");
             }
+            if (drawnCards.Count > 0) { drawnCards.Clear(); }
+            ;
 
-            drawnCards ??= new List<Card>();
-            drawnCards.Clear();
             Stack<Card> stackedCards = new Stack<Card>(deckOfCards);
 
-            for (int i = 0; i <= numberOfCardsToDraw; i++)
+            for (int i = 0; i < numberOfCardsToDraw; i++)
             {
                 Card card = stackedCards.Pop();
                 drawnCards.Add(card);
             }
-
-            // var drawnCardFromStack = stackedCards.Pop();
-            // drawnCards = new List<Card> { drawnCardFromStack };
-            // deckOfCards = stackedCards.ToList();
+            deckOfCards = stackedCards.ToList();
 
 
         }
