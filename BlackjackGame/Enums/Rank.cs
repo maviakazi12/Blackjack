@@ -11,9 +11,9 @@ namespace BlackjackGame.Enums
         eight,
         nine,
         ten,
-        jack,
-        king,
-        queen,
-        ace
+        jack = 10,
+        king = 10,
+        queen = 10,
+        ace = 11
     }
 }
