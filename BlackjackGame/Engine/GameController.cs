@@ -12,9 +12,10 @@ namespace BlackjackGame.Engine
         private IDeck _deck;
         private IPlayer _player;
         private IPlayer _dealer;
+        private IIO _inputOutput;
 
         public int _initialCardsToStartWith;
-        public GameController(IDeck deck, IPlayer player, IPlayer dealer, int initialCards)
+        public GameController(IDeck deck, IPlayer player, IPlayer dealer, int initialCards,IIO inputOutput)
         {   
             if (deck == null) throw new ArgumentNullException(nameof(deck));
             if (player == null) throw new ArgumentNullException(nameof(player));
@@ -26,6 +27,7 @@ namespace BlackjackGame.Engine
             _player = player;
             _dealer = dealer;
             _initialCardsToStartWith = initialCards;
+            _inputOutput = inputOutput;
 
         }
 
@@ -42,6 +44,14 @@ namespace BlackjackGame.Engine
             _deck.Draw(_initialCardsToStartWith);
             _dealer.ReceiveCards(_deck.drawnCards);
 
+        }
+
+        public void DealCard(){
+            string playerChoice = _inputOutput.PlayerInput();
+            if (playerChoice == "hit"){
+                _deck.Draw(1);
+                _player.ReceiveCards(_deck.drawnCards);
+                }
         }
 
     
