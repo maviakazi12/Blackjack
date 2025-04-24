@@ -7,6 +7,7 @@ namespace BlackjackGame.Interfaces
 {
     public interface IIO
     {
-        
+        public string GetPlayerChoice();
+
     }
 }
