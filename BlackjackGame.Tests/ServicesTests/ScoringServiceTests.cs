@@ -94,5 +94,41 @@ namespace BlackjackGame.Tests.ServicesTests
             //Assert
             score.Should().Be(15);
         }
+
+        [Fact]
+        public void CalculateScore_Should_Treat_Ace_As_1_When_Total_Would_Bust(){
+
+            //Arrange
+            ScoringService scoring = new ScoringService();
+            List<Card> hand = new List<Card>{
+                new Card (Suit.spade, Rank.ace),
+                new Card (Suit.spade, Rank.two),
+                new Card (Suit.diamond, Rank.jack)
+                };
+
+            //Act
+            int score = scoring.CalculateScore(hand);
+
+            //Assert
+            score.Should().Be(13);
+        }
+
+        [Fact]
+        public void CalculateScore_Should_Handle_Multiple_Aces_In_Hand_Without_Exceeding_TwentyOne(){
+
+            //Arrange
+            ScoringService scoring = new ScoringService();
+            List<Card> hand = new List<Card>{
+                new Card (Suit.spade, Rank.ace),
+                new Card (Suit.spade, Rank.jack),
+                new Card (Suit.diamond, Rank.ace)
+                };
+
+            //Act
+            int score = scoring.CalculateScore(hand);
+
+            //Assert
+            score.Should().Be(12);
+        }
     }
 }
