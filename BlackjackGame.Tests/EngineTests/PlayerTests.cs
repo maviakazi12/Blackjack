@@ -53,21 +53,6 @@ namespace BlackjackGame.Tests.EngineTests
             //Assert
             player.CardsInHand.Should().HaveCount(1);
         }
-
-        [Fact]
-        public void Player_Should_Receive_A_Card_When_They_Choose_Hit()
-        {
-            //Arrange
-            var mockIO = new Mock<IIO>();
-            mockIO.Setup(a=>a.PlayerInput()).Returns("hit");
-            Player player = new Player(mockIO.Object);
-            var initialCount = player.CardsInHand.Count;
-            //Act
-            player.HitOrStay();
-            
-            //Assert
-            player.CardsInHand.Count.Should().Be(initialCount+1);
-        }
     }
     
 }

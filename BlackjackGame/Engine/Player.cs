@@ -14,7 +14,5 @@ namespace BlackjackGame.Engine
         public void ReceiveCards(List<Card> cards){
             CardsInHand.AddRange(cards);
         }
-        public void HitOrStay(){}
-        public void DrawOneCard(){}
     }
 }
