@@ -2,12 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BlackjackGame.Interfaces;
 
-namespace BlackjackGame.UI
+namespace BlackjackGame.Interfaces
 {
-    public class IO : IIO
+    public interface IIO
     {
-
+        
     }
 }
