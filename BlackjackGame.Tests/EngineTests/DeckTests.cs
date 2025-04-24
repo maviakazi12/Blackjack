@@ -122,5 +122,27 @@ namespace BlackjackGameTests.EngineTests
             // Assert
             deck.drawnCards.Should().HaveCount(4);
         }
+
+        [Fact]
+        public void Should_Throw_Exception_When_Deck_Is_Empty_And_Draw_Is_Called()
+        {
+            // Arrange
+            deck.deckOfCards.Clear();
+            // Act
+            Action act = () => deck.Draw(2); 
+            // Assert
+            act.Should().Throw<InvalidOperationException>().WithMessage("Cannot draw a card. The deck is empty.");
+        }
+
+        [Fact]
+        public void Should_Throw_Exception_When_Deck_Is_Empty_And_Shuffle_Is_Called()
+        {
+            // Arrange
+            deck.deckOfCards.Clear();
+            // Act
+            Action act = () => deck.Shuffle(); 
+            // Assert
+            act.Should().Throw<Exception>().WithMessage("Deck is not present");
+        }
     }
 }
