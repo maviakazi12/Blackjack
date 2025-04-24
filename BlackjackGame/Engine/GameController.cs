@@ -15,14 +15,14 @@ namespace BlackjackGame.Engine
         private IIO _inputOutput;
 
         public int _initialCardsToStartWith;
-        public GameController(IDeck deck, IPlayer player, IPlayer dealer, int initialCards,IIO inputOutput)
-        {   
+        public GameController(IDeck deck, IPlayer player, IPlayer dealer, int initialCards, IIO inputOutput)
+        {
             if (deck == null) throw new ArgumentNullException(nameof(deck));
             if (player == null) throw new ArgumentNullException(nameof(player));
             if (dealer == null) throw new ArgumentNullException(nameof(dealer));
             if (initialCards < 2 || initialCards > 4) throw new ArgumentException("Initial number of cards should be between 2 and 4");
 
-        
+
             _deck = deck;
             _player = player;
             _dealer = dealer;
@@ -46,14 +46,16 @@ namespace BlackjackGame.Engine
 
         }
 
-        public void DealCard(){
-            string playerChoice = _inputOutput.PlayerInput();
-            if (playerChoice == "hit"){
+        public void DealCard()
+        {
+            string playerChoice = _inputOutput.GetPlayerChoice();
+            if (playerChoice == "hit")
+            {
                 _deck.Draw(1);
                 _player.ReceiveCards(_deck.drawnCards);
-                }
+            }
         }
 
-    
+
     }
 }
