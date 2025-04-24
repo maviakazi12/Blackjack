@@ -41,7 +41,7 @@ namespace BlackjackGameTests.EngineTests
             var cardDeck = deck.deckOfCards;
 
             // Assert
-            cardDeck.Select(card => (card.Suit, card.Rank)).Should().OnlyHaveUniqueItems();
+            cardDeck.Select(card => (card)).Should().OnlyHaveUniqueItems();
         }
 
         [Fact]
@@ -78,14 +78,13 @@ namespace BlackjackGameTests.EngineTests
             var shuffledDeck = deck.deckOfCards.ToList();
 
             // Assert
-            shuffledDeck.Select(card => (card.Suit, card.Rank)).Should().OnlyHaveUniqueItems();
+            shuffledDeck.Select(card => card).Should().OnlyHaveUniqueItems();
         }
 
         [Fact]
         public void Draw_Method_Should_Draw_One_Card_When_Given_1_parameter()
         {
             // Act
-            deck.InitializeDeck();
             deck.Shuffle();
             deck.Draw(1);
             var result = deck.drawnCards;
