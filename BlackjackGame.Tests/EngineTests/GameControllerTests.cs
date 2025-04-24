@@ -13,7 +13,7 @@ namespace BlackjackTests.EngineTests
         {
             // Arrange
             var mockDeck = new Mock<IDeck>();
-            GameController gameController = new GameController(mockDeck.Object,Mock.Of<IPlayer>(),Mock.Of<IPlayer>(),2);
+            GameController gameController = new GameController(mockDeck.Object,Mock.Of<IPlayer>(),Mock.Of<IPlayer>(),2,Mock.Of<IIO>());
 
             // Act
             gameController.Run();
@@ -28,7 +28,7 @@ namespace BlackjackTests.EngineTests
         {
             // Arrange
             var mockDeck = new Mock<IDeck>();
-            GameController gameController = new GameController(mockDeck.Object,Mock.Of<IPlayer>(),Mock.Of<IPlayer>(),2);
+            GameController gameController = new GameController(mockDeck.Object,Mock.Of<IPlayer>(),Mock.Of<IPlayer>(),2,Mock.Of<IIO>());
 
             // Act
             gameController.Run();
@@ -43,7 +43,7 @@ namespace BlackjackTests.EngineTests
         {
             // Arrange
             var mockDeck = new Mock<IDeck>();
-            GameController gameController = new GameController(mockDeck.Object,Mock.Of<IPlayer>(),Mock.Of<IPlayer>(),2);
+            GameController gameController = new GameController(mockDeck.Object,Mock.Of<IPlayer>(),Mock.Of<IPlayer>(),2,Mock.Of<IIO>());
 
             // Act
             gameController.Run();
@@ -57,7 +57,7 @@ namespace BlackjackTests.EngineTests
         {
             // Arrange
             var mockDeck = new Mock<IDeck>();
-            GameController gameController = new GameController(mockDeck.Object,Mock.Of<IPlayer>(),Mock.Of<IPlayer>(),4);
+            GameController gameController = new GameController(mockDeck.Object,Mock.Of<IPlayer>(),Mock.Of<IPlayer>(),4,Mock.Of<IIO>());
 
             // Act
             gameController.Run();
@@ -70,7 +70,7 @@ namespace BlackjackTests.EngineTests
         public void Constructor_Should_Throw_If_Deck_Is_Null()
         {
             Assert.Throws<ArgumentNullException>(()=> 
-            new GameController(null,Mock.Of<IPlayer>(),Mock.Of<IPlayer>(),2));
+            new GameController(null,Mock.Of<IPlayer>(),Mock.Of<IPlayer>(),2,Mock.Of<IIO>()));
         }
 
         [Fact]
@@ -80,13 +80,12 @@ namespace BlackjackTests.EngineTests
             var mockDeck = new Mock<IDeck>();
             var mockPlayer = new Mock<IPlayer>();
             var mockDealer = new Mock<IPlayer>();
-            GameController gameController = new GameController(mockDeck.Object,mockPlayer.Object, mockDealer.Object,4);
+            GameController gameController = new GameController(mockDeck.Object,mockPlayer.Object, mockDealer.Object,4,Mock.Of<IIO>());
             var drawnCards = new List<Card>
             { new Card(Suit.heart, Rank.ace),
-            new Card(Suit.spade, Rank.ten)
+                new Card(Suit.spade, Rank.ten)
             };
             mockDeck.Setup(deck=> deck.drawnCards).Returns(drawnCards);
-
 
             // Act
             gameController.Run();
@@ -94,6 +93,28 @@ namespace BlackjackTests.EngineTests
             //Assert
             mockPlayer.Verify(player => player.ReceiveCards(mockDeck.Object.drawnCards));
             mockDealer.Verify(dealer => dealer.ReceiveCards(mockDeck.Object.drawnCards));
+        }
+
+    [Fact]
+        public void DealCard_Should_Call_ReceiveCards_On_Player_They_Choose_Hit()
+        {
+            //Arrange
+            var mockIO = new Mock<IIO>();
+            var mockDeck = new Mock<IDeck>();
+            var mockPlayer = new Mock<IPlayer>();
+            var mockDealer = new Mock<IPlayer>();
+            GameController gameController = new GameController(mockDeck.Object,mockPlayer.Object, mockDealer.Object,2,mockIO.Object);
+            var drawnCard = new List<Card>
+            { new Card(Suit.heart, Rank.ace)};
+            
+            mockDeck.Setup(d => d.drawnCards).Returns(drawnCard);
+            mockIO.Setup(a=>a.PlayerInput()).Returns("hit");
+
+            //Act
+            gameController.DealCard();
+            
+            //Assert
+            mockPlayer.Verify(player => player.ReceiveCards(drawnCard),Times.Once);
         }
 
     }
