@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BlackjackGame.Enums;
 using BlackjackGame.Interfaces;
 using BlackjackGame.Models;
 
@@ -13,21 +14,25 @@ namespace BlackjackGame.Engine
         private IPlayer _player;
         private IPlayer _dealer;
         private IIO _inputOutput;
+        private IScoringService _scoring;
+        private GameState _gameState;
+        public GameState GameState => _gameState; // to expose _gameState in test
 
         public int _initialCardsToStartWith;
-        public GameController(IDeck deck, IPlayer player, IPlayer dealer, int initialCards, IIO inputOutput)
+        public GameController(IDeck deck, IPlayer player, IPlayer dealer, int initialCards, IIO inputOutput, IScoringService scoring)
         {
             if (deck == null) throw new ArgumentNullException(nameof(deck));
             if (player == null) throw new ArgumentNullException(nameof(player));
             if (dealer == null) throw new ArgumentNullException(nameof(dealer));
             if (initialCards < 2 || initialCards > 4) throw new ArgumentException("Initial number of cards should be between 2 and 4");
 
-
+            _gameState = new GameState();
             _deck = deck;
             _player = player;
             _dealer = dealer;
             _initialCardsToStartWith = initialCards;
             _inputOutput = inputOutput;
+            _scoring = scoring;
 
         }
 
@@ -46,16 +51,25 @@ namespace BlackjackGame.Engine
 
         }
 
-        public void DealCard()
+        public void PlayPlayerTurn()
         {
             string playerChoice = _inputOutput.GetPlayerChoice();
-            if (playerChoice == "hit")
+            while (playerChoice == "hit")
             {
                 _deck.Draw(1);
                 _player.ReceiveCards(_deck.drawnCards);
+                _gameState.CurrentTurn = PlayerType.Dealer;
             }
+            _gameState.CurrentTurn = PlayerType.Dealer;
         }
 
+        public void PlayDealerTurn()
+        {
+
+        }
+
+        public void ResetGame() { }
 
     }
+
 }
