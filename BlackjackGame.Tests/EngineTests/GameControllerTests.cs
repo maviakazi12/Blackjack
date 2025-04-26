@@ -3,6 +3,7 @@ using BlackjackGame.Interfaces;
 using BlackjackGame.Enums;
 using BlackjackGame.Models;
 using Moq;
+using FluentAssertions;
 
 namespace BlackjackTests.EngineTests
 {
@@ -13,7 +14,7 @@ namespace BlackjackTests.EngineTests
         {
             // Arrange
             var mockDeck = new Mock<IDeck>();
-            GameController gameController = new GameController(mockDeck.Object, Mock.Of<IPlayer>(), Mock.Of<IPlayer>(), 2, Mock.Of<IIO>());
+            GameController gameController = new GameController(mockDeck.Object, Mock.Of<IPlayer>(), Mock.Of<IPlayer>(), 2, Mock.Of<IIO>(), Mock.Of<IScoringService>());
 
             // Act
             gameController.Run();
@@ -28,7 +29,7 @@ namespace BlackjackTests.EngineTests
         {
             // Arrange
             var mockDeck = new Mock<IDeck>();
-            GameController gameController = new GameController(mockDeck.Object, Mock.Of<IPlayer>(), Mock.Of<IPlayer>(), 2, Mock.Of<IIO>());
+            GameController gameController = new GameController(mockDeck.Object, Mock.Of<IPlayer>(), Mock.Of<IPlayer>(), 2, Mock.Of<IIO>(), Mock.Of<IScoringService>());
 
             // Act
             gameController.Run();
@@ -43,7 +44,7 @@ namespace BlackjackTests.EngineTests
         {
             // Arrange
             var mockDeck = new Mock<IDeck>();
-            GameController gameController = new GameController(mockDeck.Object, Mock.Of<IPlayer>(), Mock.Of<IPlayer>(), 2, Mock.Of<IIO>());
+            GameController gameController = new GameController(mockDeck.Object, Mock.Of<IPlayer>(), Mock.Of<IPlayer>(), 2, Mock.Of<IIO>(), Mock.Of<IScoringService>());
 
             // Act
             gameController.Run();
@@ -57,7 +58,7 @@ namespace BlackjackTests.EngineTests
         {
             // Arrange
             var mockDeck = new Mock<IDeck>();
-            GameController gameController = new GameController(mockDeck.Object, Mock.Of<IPlayer>(), Mock.Of<IPlayer>(), 4, Mock.Of<IIO>());
+            GameController gameController = new GameController(mockDeck.Object, Mock.Of<IPlayer>(), Mock.Of<IPlayer>(), 4, Mock.Of<IIO>(), Mock.Of<IScoringService>());
 
             // Act
             gameController.Run();
@@ -70,7 +71,7 @@ namespace BlackjackTests.EngineTests
         public void Constructor_Should_Throw_If_Deck_Is_Null()
         {
             Assert.Throws<ArgumentNullException>(() =>
-            new GameController(null, Mock.Of<IPlayer>(), Mock.Of<IPlayer>(), 2, Mock.Of<IIO>()));
+            new GameController(null, Mock.Of<IPlayer>(), Mock.Of<IPlayer>(), 2, Mock.Of<IIO>(), Mock.Of<IScoringService>()));
         }
 
         [Fact]
@@ -80,7 +81,7 @@ namespace BlackjackTests.EngineTests
             var mockDeck = new Mock<IDeck>();
             var mockPlayer = new Mock<IPlayer>();
             var mockDealer = new Mock<IPlayer>();
-            GameController gameController = new GameController(mockDeck.Object, mockPlayer.Object, mockDealer.Object, 4, Mock.Of<IIO>());
+            GameController gameController = new GameController(mockDeck.Object, mockPlayer.Object, mockDealer.Object, 4, Mock.Of<IIO>(), Mock.Of<IScoringService>());
             var drawnCards = new List<Card>
             { new Card(Suit.heart, Rank.ace),
                 new Card(Suit.spade, Rank.ten)
@@ -96,14 +97,14 @@ namespace BlackjackTests.EngineTests
         }
 
         [Fact]
-        public void DealCard_Should_Call_ReceiveCards_On_Player_They_Choose_Hit()
+        public void PlayPlayerTurn_Should_Call_ReceiveCards_On_Player_They_Choose_Hit()
         {
             //Arrange
             var mockIO = new Mock<IIO>();
             var mockDeck = new Mock<IDeck>();
             var mockPlayer = new Mock<IPlayer>();
             var mockDealer = new Mock<IPlayer>();
-            GameController gameController = new GameController(mockDeck.Object, mockPlayer.Object, mockDealer.Object, 2, mockIO.Object);
+            GameController gameController = new GameController(mockDeck.Object, mockPlayer.Object, mockDealer.Object, 2, mockIO.Object, Mock.Of<IScoringService>());
             var drawnCard = new List<Card>
             { new Card(Suit.heart, Rank.ace)};
 
@@ -111,10 +112,46 @@ namespace BlackjackTests.EngineTests
             mockIO.Setup(a => a.GetPlayerChoice()).Returns("hit");
 
             //Act
-            gameController.DealCard();
+            gameController.PlayPlayerTurn();
 
             //Assert
             mockPlayer.Verify(player => player.ReceiveCards(drawnCard), Times.Once);
+        }
+
+        [Fact]
+        public void PlayPlayerTurn_Should_Not_Draw_Card_When_Player_Chooses_Stay()
+        {
+            //Arrange
+            var mockIO = new Mock<IIO>();
+            var mockDeck = new Mock<IDeck>();
+            var mockPlayer = new Mock<IPlayer>();
+            var mockDealer = new Mock<IPlayer>();
+            GameController gameController = new GameController(mockDeck.Object, mockPlayer.Object, mockDealer.Object, 2, mockIO.Object, Mock.Of<IScoringService>());
+            mockIO.Setup(a => a.GetPlayerChoice()).Returns("stay");
+
+            //Act
+            gameController.PlayPlayerTurn();
+
+            //Assert
+            mockPlayer.Verify(player => player.ReceiveCards(It.IsAny<List<Card>>()), Times.Never());
+        }
+
+        [Fact]
+        public void PlayPlayerTurn_Should_Set_GameState_To_Dealer_After_Hit_When_Not_Bust_Or_Win()
+        {
+            //Arrange
+            var mockIO = new Mock<IIO>();
+            var mockDeck = new Mock<IDeck>();
+            var mockPlayer = new Mock<IPlayer>();
+            var mockDealer = new Mock<IPlayer>();
+            GameController gameController = new GameController(mockDeck.Object, mockPlayer.Object, mockDealer.Object, 2, mockIO.Object, Mock.Of<IScoringService>());
+            mockIO.Setup(a => a.GetPlayerChoice()).Returns("hit");
+
+            //Act
+            gameController.PlayPlayerTurn();
+
+            //Assert
+            gameController.GameState.CurrentTurn.Should().Be(PlayerType.Dealer);
         }
 
     }
