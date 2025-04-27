@@ -59,12 +59,20 @@ namespace BlackjackGame.Engine
                 _deck.Draw(1);
                 _player.ReceiveCards(_deck.drawnCards);
                 _gameState.CurrentTurn = PlayerType.Dealer;
+                playerChoice = _inputOutput.GetPlayerChoice();
             }
             _gameState.CurrentTurn = PlayerType.Dealer;
         }
 
         public void PlayDealerTurn()
         {
+            int dealerScore = _scoring.CalculateScore(_dealer.CardsInHand);
+
+            while (dealerScore < 17){
+                _deck.Draw(1);
+                _dealer.ReceiveCards(_deck.drawnCards);
+                dealerScore = _scoring.CalculateScore(_dealer.CardsInHand);
+            }
 
         }
 
