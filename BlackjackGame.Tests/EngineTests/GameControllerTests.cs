@@ -124,7 +124,7 @@ namespace BlackjackTests.EngineTests
             var drawnCard = new List<Card> { new Card(Suit.heart, Rank.ace) };
 
             mocker.GetMock<IDeck>().Setup(deck => deck.drawnCards).Returns(drawnCard);
-            mocker.GetMock<IIO>().Setup(io => io.GetPlayerChoice()).Returns("hit");
+            mocker.GetMock<IIO>().SetupSequence(io => io.GetPlayerChoice()).Returns("hit").Returns("stay");
 
             // Act
             controller.PlayPlayerTurn();
@@ -154,7 +154,10 @@ namespace BlackjackTests.EngineTests
             // Arrange
             var (controller, mocker) = CreateGameController();
 
-            mocker.GetMock<IIO>().Setup(io => io.GetPlayerChoice()).Returns("hit");
+            mocker.GetMock<IIO>()
+            .SetupSequence(io => io.GetPlayerChoice())
+            .Returns("hit")   // First call: Hit
+            .Returns("stay"); // Second call: Stay
 
             // Act
             controller.PlayPlayerTurn();
@@ -162,5 +165,21 @@ namespace BlackjackTests.EngineTests
             // Assert
             controller.GameState.CurrentTurn.Should().Be(PlayerType.Dealer);
         }
+
+        [Fact]
+        public void Dealer_Should_Hit_When_Score_Is_Less_Than_17()
+        {
+            // Arrange
+            var (controller, mocker) = CreateGameController();
+
+            mocker.GetMock<IScoringService>().SetupSequence(scoringService => scoringService.CalculateScore(It.IsAny<List<Card>>())).Returns(16).Returns(18);
+
+            // Act
+            controller.PlayDealerTurn();
+
+            // Assert
+            mocker.GetMock<IPlayer>().Verify(dealer => dealer.ReceiveCards(It.IsAny<List<Card>>()), Times.AtLeastOnce());
+        }
+
     }
 }
