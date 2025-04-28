@@ -33,9 +33,9 @@ namespace BlackjackGame.Engine
 
         public void Shuffle()
         {
-            if (!isDeckInitialized)
+            if (!isDeckInitialized || deckOfCards.Count == 0)
             {
-                throw new Exception("Deck is not initialized");
+                throw new Exception("Deck is not present");
             }
             Random rand = new Random();
 
@@ -56,7 +56,10 @@ namespace BlackjackGame.Engine
                 throw new Exception("Deck is not initialized");
             }
             if (drawnCards.Count > 0) { drawnCards.Clear(); }
-            ;
+            
+            if (deckOfCards.Count == 0 ){
+                throw new InvalidOperationException("Cannot draw a card. The deck is empty.");
+            }
 
             Stack<Card> stackedCards = new Stack<Card>(deckOfCards);
 

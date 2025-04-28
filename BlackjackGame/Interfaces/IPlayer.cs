@@ -11,7 +11,5 @@ namespace BlackjackGame.Interfaces
         public List<Card> CardsInHand { get; set;}
 
         public void ReceiveCards(List<Card> cards);
-        public void HitOrStay();
-        public void DrawOneCard();
     }
 }
