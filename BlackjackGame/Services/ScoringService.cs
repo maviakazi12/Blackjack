@@ -12,7 +12,7 @@ namespace BlackjackGame.Services
     {
         public int CalculateScore(List<Card> cards){
             
-            if (cards.Count == 0) return 0;
+            if (cards == null || cards.Count == 0) return 0;
             int totalScore = 0;
             int aceCount = 0;
             foreach (Card card in cards){
