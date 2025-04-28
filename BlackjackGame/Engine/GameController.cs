@@ -39,7 +39,18 @@ namespace BlackjackGame.Engine
 
         }
 
-        public void Run() => dealInitialHands();
+        public void Run()
+        {
+            dealInitialHands();   // Deals cards to player and dealer
+
+            PlayPlayerTurn();    // Player hits or stays until done
+
+            PlayDealerTurn();    // Dealer plays according to their rules
+
+            HandleWinOrLoss();   // Announce who won
+
+            ResetGame();         // Reset for next game 
+        }
         private void dealInitialHands()
         {
             _deck.InitializeDeck();
@@ -72,12 +83,9 @@ namespace BlackjackGame.Engine
                 _inputOutput.DisplayScore(PlayerType.Player.ToString(), playerScore);
                 _gameState.IsPlayerBust = IsBust(playerScore);
                 _gameState.IsPlayerWinner = IsBlackjack(playerScore);
-                if (playerScore > 17 && (_gameState.IsPlayerBust  || _gameState.IsPlayerWinner))
-                {
-                    CompareFinalScores();
-                }
-            playerChoice = _inputOutput.GetPlayerChoice();
-                
+
+                playerChoice = _inputOutput.GetPlayerChoice();
+
             }
 
             _gameState.CurrentTurn = PlayerType.Dealer;
@@ -102,17 +110,13 @@ namespace BlackjackGame.Engine
                 _gameState.IsDealerBust = IsBust(dealerScore);
                 _gameState.IsDealerWinner = IsBlackjack(dealerScore);
 
-                if (dealerScore > 17 && !_gameState.IsDealerBust  && !_gameState.IsDealerWinner)
-            {
-                dealerChoice = "stay";
-                _inputOutput.DisplayDealerChoice(dealerChoice);
-            }   
+                if (dealerScore > 17 && !_gameState.IsDealerBust && !_gameState.IsDealerWinner)
+                {
+                    dealerChoice = "stay";
+                    _inputOutput.DisplayDealerChoice(dealerChoice);
+                }
 
             }
-            
-            HandleWinOrLoss();
-            
-
         }
 
         public bool IsBust(int score) => score > 21;
@@ -129,26 +133,40 @@ namespace BlackjackGame.Engine
             else if (_gameState.IsPlayerBust || _gameState.IsDealerWinner)
             {
                 _inputOutput.AnnounceWinner("Dealer", "Player");
-            } else
+            }
+            else
             {
                 CompareFinalScores();
             }
         }
-        public void CompareFinalScores()
+        private void CompareFinalScores()
         {
             int playerFinalScore = _scoring.CalculateScore(_player.CardsInHand);
-            int dealerFinalScore= _scoring.CalculateScore(_dealer.CardsInHand);
+            int dealerFinalScore = _scoring.CalculateScore(_dealer.CardsInHand);
 
-            if (playerFinalScore < dealerFinalScore){
-                _inputOutput.AnnounceWinner("Dealer", "Player");
-            } else if (playerFinalScore > dealerFinalScore){
-                _inputOutput.AnnounceWinner("Player", "Dealer");
-            } else
+            if (playerFinalScore < dealerFinalScore)
             {
-            _inputOutput.DrawGame();
+                _inputOutput.AnnounceWinner("Dealer", "Player");
+            }
+            else if (playerFinalScore > dealerFinalScore)
+            {
+                _inputOutput.AnnounceWinner("Player", "Dealer");
+            }
+            else
+            {
+                _inputOutput.DrawGame();
             }
         }
-        public void ResetGame() { }
+        public void ResetGame()
+        {
+            _player.CardsInHand.Clear();
+            _dealer.CardsInHand.Clear();
+            playerScore = 0;
+            dealerScore = 0;
+            _deck.deckOfCards.Clear();
+            _gameState = new GameState();
+
+        }
 
     }
 

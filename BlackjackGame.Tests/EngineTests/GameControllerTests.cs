@@ -250,5 +250,29 @@ namespace BlackjackTests.EngineTests
             //Assert
             controller.GameState.IsDealerWinner.Should().BeTrue();
         }
+        [Fact]
+public void Reset_Should_Reset_Game()
+{
+    // Arrange
+    var (controller, mocker) = CreateGameController();
+
+    // fake a non-empty game state
+    mocker.GetMock<IPlayer>().Setup(player => player.CardsInHand).Returns(new List<Card> { new Card(Suit.spade, Rank.five) });
+    mocker.GetMock<IPlayer>().Setup(dealer => dealer.CardsInHand).Returns(new List<Card> { new Card(Suit.heart, Rank.king) });
+    controller.GameState.IsPlayerBust = true;
+    controller.GameState.IsDealerBust = true;
+    mocker.GetMock<IDeck>().Setup(deck => deck.deckOfCards).Returns(new List<Card> { new Card(Suit.diamond, Rank.two) });
+
+    // Act
+    controller.ResetGame();
+
+    // Assert
+    mocker.GetMock<IPlayer>().Object.CardsInHand.Should().BeEmpty("Player's hand should be cleared");
+    mocker.GetMock<IPlayer>().Object.CardsInHand.Should().BeEmpty("Dealer's hand should be cleared");
+    controller.GameState.IsPlayerBust.Should().BeFalse("Player bust should be reset");
+    controller.GameState.IsDealerBust.Should().BeFalse("Dealer bust should be reset");
+    mocker.GetMock<IDeck>().Object.deckOfCards.Should().BeEmpty("Deck should be cleared");
+}
+
     }
 }
