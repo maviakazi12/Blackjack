@@ -20,7 +20,7 @@ namespace BlackjackGame.Tests.ServicesTests
 
             //Act
             int score = scoring.CalculateScore(hand);
-            
+
             //Assert
             score.Should().Be(0);
         }
@@ -36,7 +36,7 @@ namespace BlackjackGame.Tests.ServicesTests
 
             //Act
             int score = scoring.CalculateScore(hand);
-            
+
             //Assert
             score.Should().Be(14);
         }
@@ -46,13 +46,14 @@ namespace BlackjackGame.Tests.ServicesTests
         [InlineData(Rank.queen, 10)]
         [InlineData(Rank.king, 10)]
 
-        public void CalculateScore_Should_Return_10_For_Any_Face_Value_Card(Rank cardRank, int value){
+        public void CalculateScore_Should_Return_10_For_Any_Face_Value_Card(Rank cardRank, int value)
+        {
 
             //Arrange
             ScoringService scoring = new ScoringService();
             List<Card> hand = new List<Card>{
                 new Card (Suit.spade, cardRank)};
-            
+
             //Act
             int score = scoring.CalculateScore(hand);
 
@@ -61,7 +62,8 @@ namespace BlackjackGame.Tests.ServicesTests
         }
 
         [Fact]
-        public void CalculateScore_Should_Sum_Values_Of_Mixed_Cards(){
+        public void CalculateScore_Should_Sum_Values_Of_Mixed_Cards()
+        {
 
             //Arrange
 
@@ -79,7 +81,8 @@ namespace BlackjackGame.Tests.ServicesTests
         }
 
         [Fact]
-        public void CalculateScore_Should_Treat_Ace_As_11_When_Safe(){
+        public void CalculateScore_Should_Treat_Ace_As_11_When_Safe()
+        {
 
             //Arrange
             ScoringService scoring = new ScoringService();
@@ -96,7 +99,8 @@ namespace BlackjackGame.Tests.ServicesTests
         }
 
         [Fact]
-        public void CalculateScore_Should_Treat_Ace_As_1_When_Total_Would_Bust(){
+        public void CalculateScore_Should_Treat_Ace_As_1_When_Total_Would_Bust()
+        {
 
             //Arrange
             ScoringService scoring = new ScoringService();
@@ -114,7 +118,8 @@ namespace BlackjackGame.Tests.ServicesTests
         }
 
         [Fact]
-        public void CalculateScore_Should_Handle_Multiple_Aces_In_Hand_Without_Exceeding_TwentyOne(){
+        public void CalculateScore_Should_Handle_Multiple_Aces_In_Hand_Without_Exceeding_TwentyOne()
+        {
 
             //Arrange
             ScoringService scoring = new ScoringService();
@@ -129,6 +134,49 @@ namespace BlackjackGame.Tests.ServicesTests
 
             //Assert
             score.Should().Be(12);
+        }
+
+        [Fact]
+        public void CalculateScore_Should_Return_Same_Result_When_Called_Twice_On_Same_Cards()
+        {
+            // Arrange
+            ScoringService scoring = new ScoringService();
+            List<Card> hand = new List<Card>
+            {
+                new Card(Suit.spade, Rank.five),
+                new Card(Suit.heart, Rank.six)
+            };
+
+            // Act
+            int firstScore = scoring.CalculateScore(hand);
+            int secondScore = scoring.CalculateScore(hand);
+
+            // Assert
+            firstScore.Should().Be(11);
+            secondScore.Should().Be(11);
+        }
+
+        [Fact]
+        public void CalculateScore_Should_Update_Score_When_New_Card_Is_Added()
+        {
+            // Arrange
+            ScoringService scoring = new ScoringService();
+            List<Card> hand = new List<Card>
+            {
+                new Card(Suit.spade, Rank.five),
+                new Card(Suit.heart, Rank.six)
+            };
+
+            // Act
+            int initialScore = scoring.CalculateScore(hand);
+
+            // Add a new card
+            hand.Add(new Card(Suit.diamond, Rank.ten));
+            int updatedScore = scoring.CalculateScore(hand);
+
+            // Assert
+            initialScore.Should().Be(11);
+            updatedScore.Should().Be(21);
         }
     }
 }
