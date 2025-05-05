@@ -27,179 +27,140 @@ namespace BlackjackTests.EngineTests
             return (controller, mocker);
         }
 
-        //         [Fact]
-        //         public void dealInitialHands_Should_Call_InitializeDeck_Method()
-        //         {
-        //             // Arrange
-        //             var (controller, mocker) = CreateGameController();
+        [Fact]
+        public void dealInitialHands_Should_Call_InitializeDeck_Method()
+        {
+            // Arrange
+            var (controller, mocker) = CreateGameController();
+            var player = mocker.Get<IPlayer>();
 
-        //             // Act
-        //             controller.Run();
+            // Act
+            controller.dealInitialHands(player, PlayerType.Player);
 
-        //             // Assert
-        //             mocker.GetMock<IDeck>().Verify(deck => deck.InitializeDeck(), Times.Once);
-        //         }
+            // Assert
+            mocker.GetMock<IDeck>().Verify(deck => deck.InitializeDeck(), Times.Once);
+        }
 
-        //         [Fact]
-        //         public void dealInitialHands_Should_Call_Shuffle_Method()
-        //         {
-        //             // Arrange
-        //             var (controller, mocker) = CreateGameController();
+        [Fact]
+        public void dealInitialHands_Should_Call_Shuffle_Method()
+        {
+            // Arrange
+            var (controller, mocker) = CreateGameController();
+            var player = mocker.Get<IPlayer>();
 
-        // Mock ResetGame to prevent it from interfering with the test
-        // mocker.GetMock<IPlayer>().Setup(player => player.CardsInHand).Returns(new List<Card>());
-        // mocker.GetMock<IPlayer>().Setup(dealer => dealer.CardsInHand).Returns(new List<Card>());
-        // mocker.GetMock<IDeck>().Setup(deck => deck.deckOfCards).Returns(new List<Card>());
+            // Act
+            controller.dealInitialHands(player, PlayerType.Player);
 
-        //             // Act
-        //             controller.Run();
+            // Assert
+            mocker.GetMock<IDeck>().Verify(deck => deck.Shuffle(), Times.Once);
+        }
 
-        //             // Assert
-        //             mocker.GetMock<IDeck>().Verify(deck => deck.Shuffle(), Times.Once);
-        //         }
+        [Fact]
+        public void dealInitialHands_Should_Deal_n_Number_Of_Cards()
+        {
+            // Arrange
+            var (controller, mocker) = CreateGameController(4);
 
-        //         [Fact]
-        //         public void DealInitialHands_Should_Call_Draw_2_Times_For_Player_And_Dealer()
-        //         {
-        //             // Arrange
-        //             var (controller, mocker) = CreateGameController();
+            // Mock ResetGame to prevent it from interfering with the test
+            mocker.GetMock<IPlayer>().Setup(player => player.CardsInHand).Returns(new List<Card>());
+            mocker.GetMock<IPlayer>().Setup(dealer => dealer.CardsInHand).Returns(new List<Card>());
+            mocker.GetMock<IDeck>().Setup(deck => deck.deckOfCards).Returns(new List<Card>());
+            var player = mocker.Get<IPlayer>();
 
-        //             // Act
-        //             controller.Run();
+            // Act
+            controller.dealInitialHands(player, PlayerType.Player);
 
-        //             // Assert
-        //             mocker.GetMock<IDeck>().Verify(deck => deck.Draw(2), Times.Exactly(2));
-        //         }
+            // Assert
+            mocker.GetMock<IDeck>().Verify(deck => deck.Draw(4), Times.Once);
+        }
 
-        //         [Fact]
-        //         public void dealInitialHands_Should_Deal_n_Number_Of_Cards()
-        //         {
-        //             // Arrange
-        //             var (controller, mocker) = CreateGameController(4);
+        [Fact]
+        public void Constructor_Should_Throw_Exception_If_Deck_Is_Null()
+        {
+            // Act & Assert
+            Assert.Throws<ArgumentNullException>(() =>
+                new GameController(
+                    null,
+                    Mock.Of<IPlayer>(),
+                    Mock.Of<IPlayer>(),
+                    2,
+                    Mock.Of<IIO>(),
+                    Mock.Of<IScoringService>())
+            );
+        }
 
-        // Mock ResetGame to prevent it from interfering with the test
-        // mocker.GetMock<IPlayer>().Setup(player => player.CardsInHand).Returns(new List<Card>());
-        // mocker.GetMock<IPlayer>().Setup(dealer => dealer.CardsInHand).Returns(new List<Card>());
-        // mocker.GetMock<IDeck>().Setup(deck => deck.deckOfCards).Returns(new List<Card>());
 
-        //             // Act
-        //             controller.Run();
+        [Fact]
+        public void PlayPlayerTurn_Should_Call_ReceiveCards_On_Player_They_Choose_Hit()
+        {
+            // Arrange
+            var (controller, mocker) = CreateGameController();
 
-        //             // Assert
-        //             mocker.GetMock<IDeck>().Verify(deck => deck.Draw(4), Times.Exactly(2));
-        //         }
+            var drawnCard = new List<Card> { new Card(Suit.heart, Rank.ace) };
 
-        //         [Fact]
-        //         public void Constructor_Should_Throw_Exception_If_Deck_Is_Null()
-        //         {
-        //             // Act & Assert
-        //             Assert.Throws<ArgumentNullException>(() =>
-        //                 new GameController(
-        //                     null,
-        //                     Mock.Of<IPlayer>(),
-        //                     Mock.Of<IPlayer>(),
-        //                     2,
-        //                     Mock.Of<IIO>(),
-        //                     Mock.Of<IScoringService>())
-        //             );
-        //         }
+            mocker.GetMock<IDeck>().Setup(deck => deck.drawnCards).Returns(drawnCard);
+            mocker.GetMock<IIO>().SetupSequence(io => io.GetPlayerChoice()).Returns("hit").Returns("stay");
 
-        //         [Fact]
-        //         public void Run_Should_Call_ReceiveCards_On_Player_And_Dealer_With_Deck_DrawnCards()
-        //         {
-        //             // Arrange
-        //             var (controller, mocker) = CreateGameController(4);
+            // Act
+            controller.PlayPlayerTurn();
 
-        //             var drawnCards = new List<Card>
-        //             {
-        //                 new Card(Suit.heart, Rank.ace),
-        //                 new Card(Suit.spade, Rank.ten)
-        //             };
+            // Assert
+            mocker.GetMock<IPlayer>().Verify(player => player.ReceiveCards(drawnCard), Times.Once);
+        }
 
-        //             mocker.GetMock<IDeck>().Setup(deck => deck.drawnCards).Returns(drawnCards);
-        //             
-        //              Mock ResetGame to prevent it from interfering with the test
-        //          mocker.GetMock<IPlayer>().Setup(player => player.CardsInHand).Returns(new List<Card>());
-        //          mocker.GetMock<IPlayer>().Setup(dealer => dealer.CardsInHand).Returns(new List<Card>());
-        //          mocker.GetMock<IDeck>().Setup(deck => deck.deckOfCards).Returns(new List<Card>());
-        //             // Act
-        //             controller.Run();
+        [Fact]
+        public void PlayPlayerTurn_Should_Not_Draw_Card_When_Player_Chooses_Stay()
+        {
+            // Arrange
+            var (controller, mocker) = CreateGameController();
 
-        //             // Assert
-        //             mocker.GetMock<IPlayer>().Verify(player => player.ReceiveCards(drawnCards));
-        //             mocker.GetMock<IPlayer>().Verify(dealer => dealer.ReceiveCards(drawnCards));
-        //         }
+            mocker.GetMock<IIO>().Setup(io => io.GetPlayerChoice()).Returns("stay");
 
-        //         [Fact]
-        //         public void PlayPlayerTurn_Should_Call_ReceiveCards_On_Player_They_Choose_Hit()
-        //         {
-        //             // Arrange
-        //             var (controller, mocker) = CreateGameController();
+            // Act
+            controller.PlayPlayerTurn();
 
-        //             var drawnCard = new List<Card> { new Card(Suit.heart, Rank.ace) };
+            // Assert
+            mocker.GetMock<IPlayer>().Verify(player => player.ReceiveCards(It.IsAny<List<Card>>()), Times.Never());
+        }
 
-        //             mocker.GetMock<IDeck>().Setup(deck => deck.drawnCards).Returns(drawnCard);
-        //             mocker.GetMock<IIO>().SetupSequence(io => io.GetPlayerChoice()).Returns("hit").Returns("stay");
+        [Fact]
+        public void PlayPlayerTurn_Should_Set_GameState_To_Dealer_After_Hit_When_Not_Bust_Or_Win()
+        {
+            // Arrange
+            var (controller, mocker) = CreateGameController();
 
-        //             // Act
-        //             controller.PlayPlayerTurn();
+            mocker.GetMock<IIO>()
+            .SetupSequence(io => io.GetPlayerChoice())
+            .Returns("hit")   // First call: Hit
+            .Returns("stay"); // Second call: Stay
 
-        //             // Assert
-        //             mocker.GetMock<IPlayer>().Verify(player => player.ReceiveCards(drawnCard), Times.Once);
-        //         }
+            // Act
+            controller.PlayPlayerTurn();
 
-        //         [Fact]
-        //         public void PlayPlayerTurn_Should_Not_Draw_Card_When_Player_Chooses_Stay()
-        //         {
-        //             // Arrange
-        //             var (controller, mocker) = CreateGameController();
+            // Assert
+            controller.GameState.CurrentTurn.Should().Be(PlayerType.Dealer);
+        }
 
-        //             mocker.GetMock<IIO>().Setup(io => io.GetPlayerChoice()).Returns("stay");
+        [Fact]
+        public void Player_Should_Bust_When_Score_Exceeds_21()
+        {
+            //Arrange
+            var(controller,mocker) = CreateGameController();
+            mocker.GetMock<IScoringService>()
+            .SetupSequence(scoringService => scoringService.CalculateScore(It.IsAny<List<Card>>()))
+            .Returns(23);
 
-        //             // Act
-        //             controller.PlayPlayerTurn();
+            mocker.GetMock<IIO>()
+            .SetupSequence(io => io.GetPlayerChoice())
+            .Returns("hit");
 
-        //             // Assert
-        //             mocker.GetMock<IPlayer>().Verify(player => player.ReceiveCards(It.IsAny<List<Card>>()), Times.Never());
-        //         }
+            //Act
+            controller.PlayPlayerTurn();
 
-        //         [Fact]
-        //         public void PlayPlayerTurn_Should_Set_GameState_To_Dealer_After_Hit_When_Not_Bust_Or_Win()
-        //         {
-        //             // Arrange
-        //             var (controller, mocker) = CreateGameController();
+            //Assert
+            controller.GameState.IsPlayerBust.Should().BeTrue();
+        }
 
-        //             mocker.GetMock<IIO>()
-        //             .SetupSequence(io => io.GetPlayerChoice())
-        //             .Returns("hit")   // First call: Hit
-        //             .Returns("stay"); // Second call: Stay
-
-        //             // Act
-        //             controller.PlayPlayerTurn();
-
-        //             // Assert
-        //             controller.GameState.CurrentTurn.Should().Be(PlayerType.Dealer);
-        //         }
-
-        //         [Fact]
-        //         public void Player_Should_Bust_When_Score_Exceeds_21()
-        //         {
-        //             //Arrange
-        //             var(controller,mocker) = CreateGameController();
-        //             mocker.GetMock<IScoringService>()
-        //             .SetupSequence(scoringService => scoringService.CalculateScore(It.IsAny<List<Card>>()))
-        //             .Returns(23);
-
-        //             mocker.GetMock<IIO>()
-        //             .SetupSequence(io => io.GetPlayerChoice())
-        //             .Returns("hit");
-
-        //             //Act
-        //             controller.PlayPlayerTurn();
-
-        //             //Assert
-        //             controller.GameState.IsPlayerBust.Should().BeTrue();
-        //         }
         [Fact]
         public void Player_Should_Win_When_Score_Is_21()
         {
@@ -229,92 +190,91 @@ namespace BlackjackTests.EngineTests
         }
 
 
-                [Fact]
-                public void Dealer_Should_Hit_When_Score_Is_Less_Than_Equal_To_17()
-                {
-                    // Arrange
-                    var (controller, mocker) = CreateGameController();
+        [Fact]
+        public void Dealer_Should_Hit_When_Score_Is_Less_Than_Equal_To_17()
+        {
+            // Arrange
+            var (controller, mocker) = CreateGameController();
 
-                    mocker.GetMock<IScoringService>().SetupSequence(scoringService => scoringService.CalculateScore(It.IsAny<List<Card>>())).Returns(12).Returns(16).Returns(19);
+            mocker.GetMock<IScoringService>().SetupSequence(scoringService => scoringService.CalculateScore(It.IsAny<List<Card>>())).Returns(12).Returns(16).Returns(19);
 
-                    // Act
-                    controller.PlayDealerTurn();
+            // Act
+            controller.PlayDealerTurn();
 
-                    // Assert
-                    mocker.GetMock<IPlayer>().Verify(dealer => dealer.ReceiveCards(It.IsAny<List<Card>>()), Times.AtLeastOnce());
-                }
+            // Assert
+            mocker.GetMock<IPlayer>().Verify(dealer => dealer.ReceiveCards(It.IsAny<List<Card>>()), Times.AtLeastOnce());
+        }
 
-                [Fact]
-                public void Dealer_Should_Stay_When_Score_Is_Greater_Than_17()
-                {
-                    //Arrange
-                    var(controller,mocker) = CreateGameController();
-                    mocker.GetMock<IScoringService>().Setup(scoringService => scoringService.CalculateScore(It.IsAny<List<Card>>())).Returns(19);
+        [Fact]
+        public void Dealer_Should_Stay_When_Score_Is_Greater_Than_17()
+        {
+            //Arrange
+            var(controller,mocker) = CreateGameController();
+            mocker.GetMock<IScoringService>().Setup(scoringService => scoringService.CalculateScore(It.IsAny<List<Card>>())).Returns(19);
 
-                    //Act
-                    controller.PlayDealerTurn();
+            //Act
+            controller.PlayDealerTurn();
 
-                    //Assert
-                    mocker.GetMock<IPlayer>().Verify(dealer => dealer.ReceiveCards(It.IsAny<List<Card>>()), Times.Never());
-                }
+            //Assert
+            mocker.GetMock<IPlayer>().Verify(dealer => dealer.ReceiveCards(It.IsAny<List<Card>>()), Times.Never());
+        }
 
-        //         [Fact]
+        [Fact]
 
-        //         public void Dealer_Should_Bust_When_Score_Greater_Than_21()
-        //         {
-        //             //Arrange
-        //             var(controller,mocker) = CreateGameController();
-        //             mocker.GetMock<IScoringService>()
-        //             .SetupSequence(scoringService => scoringService.CalculateScore(It.IsAny<List<Card>>()))
-        //             .Returns(15) 
-        //             .Returns(23);
+        public void Dealer_Should_Bust_When_Score_Greater_Than_21()
+        {
+            //Arrange
+            var(controller,mocker) = CreateGameController();
+            mocker.GetMock<IScoringService>()
+            .SetupSequence(scoringService => scoringService.CalculateScore(It.IsAny<List<Card>>()))
+            .Returns(15) 
+            .Returns(23);
 
-        //             //Act
-        //             controller.PlayDealerTurn();
+            //Act
+            controller.PlayDealerTurn();
 
-        //             //Assert
-        //             controller.GameState.IsDealerBust.Should().BeTrue();
-        //         }
+            //Assert
+            controller.GameState.IsDealerBust.Should().BeTrue();
+        }
 
-        //         [Fact]
-        //         public void Dealer_Should_Win_When_Score_Is_21()
-        //         {
-        //             //Arrange
-        //             var(controller,mocker) = CreateGameController();
-        //             mocker.GetMock<IScoringService>()
-        //             .SetupSequence(scoringService => scoringService.CalculateScore(It.IsAny<List<Card>>()))
-        //             .Returns(15) 
-        //             .Returns(21);
+        [Fact]
+        public void Dealer_Should_Win_When_Score_Is_21()
+        {
+            //Arrange
+            var(controller,mocker) = CreateGameController();
+            mocker.GetMock<IScoringService>()
+            .SetupSequence(scoringService => scoringService.CalculateScore(It.IsAny<List<Card>>()))
+            .Returns(15) 
+            .Returns(21);
 
-        //             //Act
-        //             controller.PlayDealerTurn();
+            //Act
+            controller.PlayDealerTurn();
 
-        //             //Assert
-        //             controller.GameState.IsDealerWinner.Should().BeTrue();
-        //         }
-        //         [Fact]
-        // public void Reset_Should_Reset_Game()
-        // {
-        //     // Arrange
-        //     var (controller, mocker) = CreateGameController();
+            //Assert
+            controller.GameState.IsDealerWinner.Should().BeTrue();
+        }
+        [Fact]
+        public void ResetGame_Should_Reset_Game()
+        {
+            // Arrange
+            var (controller, mocker) = CreateGameController();
 
-        //     // fake a non-empty game state
-        //     mocker.GetMock<IPlayer>().Setup(player => player.CardsInHand).Returns(new List<Card> { new Card(Suit.spade, Rank.five) });
-        //     mocker.GetMock<IPlayer>().Setup(dealer => dealer.CardsInHand).Returns(new List<Card> { new Card(Suit.heart, Rank.king) });
-        //     controller.GameState.IsPlayerBust = true;
-        //     controller.GameState.IsDealerBust = true;
-        //     mocker.GetMock<IDeck>().Setup(deck => deck.deckOfCards).Returns(new List<Card> { new Card(Suit.diamond, Rank.two) });
+            // fake a non-empty game state
+            mocker.GetMock<IPlayer>().Setup(player => player.CardsInHand).Returns(new List<Card> { new Card(Suit.spade, Rank.five) });
+            mocker.GetMock<IPlayer>().Setup(dealer => dealer.CardsInHand).Returns(new List<Card> { new Card(Suit.heart, Rank.king) });
+            controller.GameState.IsPlayerBust = true;
+            controller.GameState.IsDealerBust = true;
+            mocker.GetMock<IDeck>().Setup(deck => deck.deckOfCards).Returns(new List<Card> { new Card(Suit.diamond, Rank.two) });
 
-        //     // Act
-        //     controller.ResetGame();
+            // Act
+            controller.ResetGame();
 
-        //     // Assert
-        //     mocker.GetMock<IPlayer>().Object.CardsInHand.Should().BeEmpty("Player's hand should be cleared");
-        //     mocker.GetMock<IPlayer>().Object.CardsInHand.Should().BeEmpty("Dealer's hand should be cleared");
-        //     controller.GameState.IsPlayerBust.Should().BeFalse("Player bust should be reset");
-        //     controller.GameState.IsDealerBust.Should().BeFalse("Dealer bust should be reset");
-        //     mocker.GetMock<IDeck>().Object.deckOfCards.Should().BeEmpty("Deck should be cleared");
-        // }
+            // Assert
+            mocker.GetMock<IPlayer>().Verify(player => player.Reset(), Times.Exactly(2));
+            controller.GameState.IsPlayerBust.Should().BeFalse("Player bust should be reset");
+            controller.GameState.IsDealerBust.Should().BeFalse("Dealer bust should be reset");
+            mocker.GetMock<IDeck>().Object.deckOfCards.Should().BeEmpty("Deck should be cleared");
+        }
 
         [Fact]
         public void Run_Should_Announce_Player_Win_When_Dealer_Busts()
@@ -340,24 +300,33 @@ namespace BlackjackTests.EngineTests
             mocker.GetMock<IIO>().Verify(io => io.AnnounceWinner("Player", "Dealer"), Times.Once);
         }
 
-        // [Fact]
-        // public void Run_Should_Let_Player_Hit_Or_Stay()
-        // {
-        //     var (controller, mocker) = CreateGameController();
+        [Fact]
+        public void Game_Should_Draw_If_Both_Get_Same_Score_And_Decided_To_Stay()
+        {
+            var (controller, mocker) = CreateGameController();
 
-        //     mocker.GetMock<IIO>().Setup(io => io.GetPlayerChoice()).Returns("stay");
+            mocker.GetMock<IIO>().Setup(io => io.GetPlayerChoice()).Returns("stay");
 
-        //     mocker.GetMock<IScoringService>()
-        //         .SetupSequence(s => s.CalculateScore(It.IsAny<List<Card>>()))
-        //         .Returns(18) // Player score after initial cards
-        //         .Returns(20) // Dealer score after initial cards
-        //         .Returns(18) // Player score for the next call
-        //         .Returns(20); // Dealer score for the next call
+            mocker.GetMock<IScoringService>()
+                .SetupSequence(s => s.CalculateScore(It.IsAny<List<Card>>()))
+                .Returns(18) // Player score after initial cards
+                .Returns(18) // Dealer score after initial cards
+                .Returns(18) // Player score for the next call
+                .Returns(18) // Dealer score for the next call
+                .Returns(18) // Player score for the next call
+                .Returns(18) // Dealer score for the next call
+                .Returns(18); // Player score for the next call
 
-        //     controller.Run();
+            //  Mock ResetGame to prevent it from interfering with the test
+            mocker.GetMock<IPlayer>().Setup(player => player.CardsInHand).Returns(new List<Card>());
+            mocker.GetMock<IPlayer>().Setup(dealer => dealer.CardsInHand).Returns(new List<Card>());
+            mocker.GetMock<IDeck>().Setup(deck => deck.deckOfCards).Returns(new List<Card>());
 
-        //     mocker.GetMock<IIO>().Verify(io => io.AnnounceWinner("Dealer", "Player"), Times.Once);
-        // }
+
+            controller.Run();
+
+            mocker.GetMock<IIO>().Verify(io => io.DrawGame(), Times.Once);
+        }
 
     }
 }
