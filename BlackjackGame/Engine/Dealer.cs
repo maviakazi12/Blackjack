@@ -14,6 +14,11 @@ namespace BlackjackGame.Engine
         public void ReceiveCards(List<Card> cards){
             CardsInHand.AddRange(cards);
         }
+
+        public void Reset()
+        {
+            CardsInHand.Clear();
+        }
         
     }
 }

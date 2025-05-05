@@ -210,8 +210,8 @@ namespace BlackjackGame.Engine
         
         public void ResetGame()
         {
-            _player.CardsInHand.Clear();
-            _dealer.CardsInHand.Clear();
+            _player.Reset();
+            _dealer.Reset();
             playerScore = 0;
             dealerScore = 0;
             _deck.deckOfCards.Clear();
