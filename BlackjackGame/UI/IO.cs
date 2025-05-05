@@ -29,7 +29,7 @@ namespace BlackjackGame.UI
 
         public void AnnounceWinner(string winner, string loser)
         {
-            if (winner == "player")
+            if (winner == "Player")
                 Console.WriteLine(PromptMessages.PlayerWins);
             else
                 Console.WriteLine(PromptMessages.DealerWins);
@@ -45,7 +45,11 @@ namespace BlackjackGame.UI
             {
                 Console.WriteLine(PromptMessages.DealerHit);
             }
-            Console.WriteLine(PromptMessages.DealerStay);
+            else if (dealerChoice == "stay")
+            {
+                Console.WriteLine(PromptMessages.DealerStay);
+            }
+
         }
 
         public void DisplayPlayerHand(List<Card> playerHand)
