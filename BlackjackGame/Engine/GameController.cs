@@ -10,6 +10,7 @@ namespace BlackjackGame.Engine
 {
     public class GameController
     {
+        private const int BlackjackScore = 21;
         private IDeck _deck;
         private IPlayer _player;
         private IPlayer _dealer;
@@ -135,9 +136,9 @@ namespace BlackjackGame.Engine
             }
         }
 
-        public bool IsBust(int score) => score > 21;
+        public bool IsBust(int score) => score > BlackjackScore;
 
-        public bool IsBlackjack(int score) => score == 21;
+        public bool IsBlackjack(int score) => score == BlackjackScore;
 
 
         public void HandleWinOrLoss()
