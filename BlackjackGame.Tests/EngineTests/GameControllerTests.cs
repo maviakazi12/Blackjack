@@ -5,7 +5,6 @@ using BlackjackGame.Models;
 using Moq;
 using Moq.AutoMock;
 using FluentAssertions;
-using BlackjackGame.Services;
 
 namespace BlackjackTests.EngineTests
 {
