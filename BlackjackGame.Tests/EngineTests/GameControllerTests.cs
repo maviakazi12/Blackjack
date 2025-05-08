@@ -10,6 +10,7 @@ namespace BlackjackTests.EngineTests
 {
     public class GameControllerTests
     {
+        //helper method
         private (GameController controller, AutoMocker mocker) CreateGameController(int initialCards = 2)
         {
             var mocker = new AutoMocker();
