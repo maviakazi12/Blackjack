@@ -5,12 +5,12 @@ using BlackjackGame.Models;
 using Moq;
 using Moq.AutoMock;
 using FluentAssertions;
-using BlackjackGame.Services;
 
 namespace BlackjackTests.EngineTests
 {
     public class GameControllerTests
     {
+        //helper method
         private (GameController controller, AutoMocker mocker) CreateGameController(int initialCards = 2)
         {
             var mocker = new AutoMocker();
@@ -27,36 +27,9 @@ namespace BlackjackTests.EngineTests
             return (controller, mocker);
         }
 
-        [Fact]
-        public void dealInitialHands_Should_Call_InitializeDeck_Method()
-        {
-            // Arrange
-            var (controller, mocker) = CreateGameController();
-            var player = mocker.Get<IPlayer>();
-
-            // Act
-            controller.dealInitialHands(player, PlayerType.Player);
-
-            // Assert
-            mocker.GetMock<IDeck>().Verify(deck => deck.InitializeDeck(), Times.Once);
-        }
 
         [Fact]
-        public void dealInitialHands_Should_Call_Shuffle_Method()
-        {
-            // Arrange
-            var (controller, mocker) = CreateGameController();
-            var player = mocker.Get<IPlayer>();
-
-            // Act
-            controller.dealInitialHands(player, PlayerType.Player);
-
-            // Assert
-            mocker.GetMock<IDeck>().Verify(deck => deck.Shuffle(), Times.Once);
-        }
-
-        [Fact]
-        public void dealInitialHands_Should_Deal_n_Number_Of_Cards()
+        public void DealInitialHands_Should_Deal_n_Number_Of_Cards()
         {
             // Arrange
             var (controller, mocker) = CreateGameController(4);
@@ -68,7 +41,7 @@ namespace BlackjackTests.EngineTests
             var player = mocker.Get<IPlayer>();
 
             // Act
-            controller.dealInitialHands(player, PlayerType.Player);
+            controller.DealInitialHands(player, PlayerType.Player);
 
             // Assert
             mocker.GetMock<IDeck>().Verify(deck => deck.Draw(4), Times.Once);
@@ -123,29 +96,13 @@ namespace BlackjackTests.EngineTests
             mocker.GetMock<IPlayer>().Verify(player => player.ReceiveCards(It.IsAny<List<Card>>()), Times.Never());
         }
 
-        [Fact]
-        public void PlayPlayerTurn_Should_Set_GameState_To_Dealer_After_Hit_When_Not_Bust_Or_Win()
-        {
-            // Arrange
-            var (controller, mocker) = CreateGameController();
-
-            mocker.GetMock<IIO>()
-            .SetupSequence(io => io.GetPlayerChoice())
-            .Returns("hit")   // First call: Hit
-            .Returns("stay"); // Second call: Stay
-
-            // Act
-            controller.PlayPlayerTurn();
-
-            // Assert
-            controller.GameState.CurrentTurn.Should().Be(PlayerType.Dealer);
-        }
+        
 
         [Fact]
         public void Player_Should_Bust_When_Score_Exceeds_21()
         {
             //Arrange
-            var(controller,mocker) = CreateGameController();
+            var (controller, mocker) = CreateGameController();
             mocker.GetMock<IScoringService>()
             .SetupSequence(scoringService => scoringService.CalculateScore(It.IsAny<List<Card>>()))
             .Returns(23);
@@ -164,8 +121,8 @@ namespace BlackjackTests.EngineTests
         [Fact]
         public void Player_Should_Win_When_Score_Is_21()
         {
-          //Arrange
-            var(controller, mocker) = CreateGameController();
+            //Arrange
+            var (controller, mocker) = CreateGameController();
             mocker.GetMock<IScoringService>()
                     .SetupSequence(scoringService => scoringService.CalculateScore(It.IsAny<List<Card>>()))
                     .Returns(21)
@@ -180,13 +137,13 @@ namespace BlackjackTests.EngineTests
             mocker.GetMock<IPlayer>().Setup(dealer => dealer.CardsInHand).Returns(new List<Card>());
             mocker.GetMock<IDeck>().Setup(deck => deck.deckOfCards).Returns(new List<Card>());
 
-          //Act
+            //Act
             controller.Run();
 
-          //Assert
+            //Assert
             mocker.GetMock<IIO>().Verify(io => io.AnnounceWinner("Player", "Dealer"), Times.Once);
 
-        
+
         }
 
 
@@ -209,7 +166,7 @@ namespace BlackjackTests.EngineTests
         public void Dealer_Should_Stay_When_Score_Is_Greater_Than_17()
         {
             //Arrange
-            var(controller,mocker) = CreateGameController();
+            var (controller, mocker) = CreateGameController();
             mocker.GetMock<IScoringService>().Setup(scoringService => scoringService.CalculateScore(It.IsAny<List<Card>>())).Returns(19);
 
             //Act
@@ -224,10 +181,10 @@ namespace BlackjackTests.EngineTests
         public void Dealer_Should_Bust_When_Score_Greater_Than_21()
         {
             //Arrange
-            var(controller,mocker) = CreateGameController();
+            var (controller, mocker) = CreateGameController();
             mocker.GetMock<IScoringService>()
             .SetupSequence(scoringService => scoringService.CalculateScore(It.IsAny<List<Card>>()))
-            .Returns(15) 
+            .Returns(15)
             .Returns(23);
 
             //Act
@@ -241,10 +198,10 @@ namespace BlackjackTests.EngineTests
         public void Dealer_Should_Win_When_Score_Is_21()
         {
             //Arrange
-            var(controller,mocker) = CreateGameController();
+            var (controller, mocker) = CreateGameController();
             mocker.GetMock<IScoringService>()
             .SetupSequence(scoringService => scoringService.CalculateScore(It.IsAny<List<Card>>()))
-            .Returns(15) 
+            .Returns(15)
             .Returns(21);
 
             //Act

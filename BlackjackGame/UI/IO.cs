@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using BlackjackGame.Constants;
 using BlackjackGame.Interfaces;
 using BlackjackGame.Models;
@@ -16,10 +14,20 @@ namespace BlackjackGame.UI
 
         public string GetPlayerChoice()
         {
-            Console.WriteLine(PromptMessages.HitOrStay);
-            string playerChoice = Console.ReadLine().ToLower();
-            if (playerChoice == "hit") return playerChoice;
-            return "stay";
+            while (true)
+            {
+                Console.WriteLine(PromptMessages.HitOrStay);
+                string playerChoice = Console.ReadLine().ToLower();
+
+                if (playerChoice == "hit" || playerChoice == "stay")
+                {
+                    return playerChoice;
+                }
+                else
+                {
+                    Console.WriteLine(PromptMessages.InvalidInput);
+                }
+            }
         }
 
         public void DisplayScore(string player, int score)

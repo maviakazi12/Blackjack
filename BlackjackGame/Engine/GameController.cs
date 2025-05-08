@@ -74,7 +74,15 @@ namespace BlackjackGame.Engine
         {
             _deck.Draw(_initialCardsToStartWith);
             player.ReceiveCards(_deck.drawnCards);
-            _inputOutput.DisplayPlayerHand(player.CardsInHand);
+            if (player == _player)
+            {
+                _inputOutput.DisplayPlayerHand(player.CardsInHand);
+            }
+            else
+            {
+                _inputOutput.DisplayDealerHand(player.CardsInHand);
+            }
+
             _inputOutput.DisplayScore(type.ToString(), _scoring.CalculateScore(player.CardsInHand));
 
         }
@@ -89,7 +97,7 @@ namespace BlackjackGame.Engine
             isBust = IsBust(score);
             isBlackjack = IsBlackjack(score);
         }
-        
+
         public void PlayPlayerTurn()
         {
             string playerChoice = _inputOutput.GetPlayerChoice();
